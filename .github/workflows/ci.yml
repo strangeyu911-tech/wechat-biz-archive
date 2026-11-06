@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.11", "3.13"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Extras parser self-test (no process access)
+        run: python extras/collect_session.py --self-test
+
+      - name: Zero-config smoke test
+        run: |
+          python wba.py --out smoke_report.md
+          test -s smoke_report.md
+          grep -q "文章总数" smoke_report.md
+          grep -q "306" smoke_report.md
+
+      - name: Verify package install and CLI entry point
+        run: |
+          python -m pip install -e .
+          wechat-biz-archive --list-providers

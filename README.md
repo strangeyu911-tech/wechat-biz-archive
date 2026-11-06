@@ -1,4 +1,12 @@
+<p align="center">
+  <img src=".github/assets/social-preview.png" width="760" alt="wechat-biz-archive: 把散落的公众号文章，变成一条能读的时间线">
+</p>
+
 # wechat-biz-archive
+
+[![CI](https://github.com/strangeyu911-tech/wechat-biz-archive/actions/workflows/ci.yml/badge.svg)](https://github.com/strangeyu911-tech/wechat-biz-archive/actions/workflows/ci.yml)
+[![Python](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 **把散落的公众号文章，变成一条能读的时间线。**
 
@@ -163,6 +171,9 @@ docs/
   DATA_SOURCES.md              输入源说明与边界
 extras/                        实验性、可选，默认不参与主流程
   collect_session.py           本机会话参数收集助手（仅本人设备）
+.github/
+  workflows/ci.yml             单元测试 + 零配置冒烟测试
+  assets/social-preview.png    分享预览图（也可在仓库 Settings 里上传）
 tests/                         基础测试
 ```
 
@@ -172,7 +183,11 @@ tests/                         基础测试
 
 ```bash
 python -m unittest discover -s tests -v
+python extras/collect_session.py --self-test
 ```
+
+CI 在 Python 3.9 / 3.11 / 3.13 上跑同样这些检查，外加零配置冒烟测试和
+`pip install -e .` 的入口验证，详见 [`.github/workflows/ci.yml`](.github/workflows/ci.yml)。
 
 ---
 

@@ -18,7 +18,6 @@ discovered at runtime; nothing about a specific machine is embedded.
 """
 import argparse
 import ctypes
-import ctypes.wintypes as wt
 import json
 import os
 import re
@@ -32,6 +31,12 @@ PARAM_RE = re.compile(rb"([A-Za-z_]+)=([^&]+)")
 REQUIRED = ("key", "uin", "pass_ticket", "appmsg_token")
 OPTIONAL = ("wxtoken",)
 
+# Plain ctypes aliases keep this module importable on non-Windows runners,
+# so --self-test and the unit tests can run in Linux CI.
+DWORD = ctypes.c_uint32
+BOOL = ctypes.c_int
+HANDLE = ctypes.c_void_p
+
 MAX_REGION = 80 * 1024 * 1024
 READABLE_PROTECT = (0x02, 0x04, 0x20, 0x40)
 MEM_COMMIT = 0x1000
@@ -43,13 +48,13 @@ class MBI(ctypes.Structure):
     _fields_ = [
         ("BaseAddress", ctypes.c_uint64),
         ("AllocationBase", ctypes.c_uint64),
-        ("AllocationProtect", wt.DWORD),
-        ("_a1", wt.DWORD),
+        ("AllocationProtect", DWORD),
+        ("_a1", DWORD),
         ("RegionSize", ctypes.c_uint64),
-        ("State", wt.DWORD),
-        ("Protect", wt.DWORD),
-        ("Type", wt.DWORD),
-        ("_a2", wt.DWORD),
+        ("State", DWORD),
+        ("Protect", DWORD),
+        ("Type", DWORD),
+        ("_a2", DWORD),
     ]
 
 
@@ -57,11 +62,11 @@ def _kernel():
     if sys.platform != "win32":
         raise RuntimeError("This helper only runs on Windows.")
     k = ctypes.WinDLL("kernel32", use_last_error=True)
-    k.OpenProcess.restype = wt.HANDLE
-    k.OpenProcess.argtypes = [wt.DWORD, wt.BOOL, wt.DWORD]
-    k.VirtualQueryEx.argtypes = [wt.HANDLE, ctypes.c_uint64,
+    k.OpenProcess.restype = HANDLE
+    k.OpenProcess.argtypes = [DWORD, BOOL, DWORD]
+    k.VirtualQueryEx.argtypes = [HANDLE, ctypes.c_uint64,
                                  ctypes.POINTER(MBI), ctypes.c_size_t]
-    k.ReadProcessMemory.argtypes = [wt.HANDLE, ctypes.c_uint64, ctypes.c_void_p,
+    k.ReadProcessMemory.argtypes = [HANDLE, ctypes.c_uint64, ctypes.c_void_p,
                                     ctypes.c_size_t, ctypes.POINTER(ctypes.c_size_t)]
     return k
 
