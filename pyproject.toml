@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wechat-biz-archive"
+version = "0.1.0"
+description = "Archive and analyze WeChat Official Account articles from any input source"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Strange", email = "strangeyu911@gmail.com" }]
+keywords = ["wechat", "archive", "timeline", "content-analysis"]
+dependencies = []
+
+[project.scripts]
+wechat-biz-archive = "wechat_biz_archive.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

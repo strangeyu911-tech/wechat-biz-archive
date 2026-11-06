@@ -1,0 +1,18 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+.env
+
+# 会话凭证极其敏感，绝不入库
+credentials*.json
+*credentials*.json
+!credentials.example.json
+.env.wechat
+
+# 本地产物
+output/
+.DS_Store
